@@ -1,0 +1,25 @@
+package com.orange.demo
+
+import com.sample.model.User
+
+rule "transactionCountLowerThan"
+  when
+   u: User (transactionCount < 5)
+  then
+   u.setCommission(10);
+end
+
+rule "transactionCountLowerThan"
+  when
+   u: User ((transactionCount < 10 && transactionCount > 5) , totalTransactionAmmount < 500 )
+  then
+   u.setCommission(5);
+end
+
+rule "transactionCountLowerThan"
+  when
+   u: User (transactionCount > 10 || totalTransactionAmmount > 1000)
+  then
+   u.setCommission(1);
+end
+

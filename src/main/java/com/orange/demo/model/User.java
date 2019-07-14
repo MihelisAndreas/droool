@@ -7,38 +7,37 @@ import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
-@Table(name="users",schema="main")
+@Table(name="user")
 public class User {
 
-    @NotNull
-    @Size(min = 2, max = 30)
-   private String firstName;
-
-    @NotNull
-    @Size(min = 2, max = 30)
-   private String lastName;
-
     @Id
-    @NotNull
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+
     @Email
-   private String email;
+    private String email;
+
+    @NotNull
+    @Size(min = 2, max = 30)
+    private String firstName;
+
+    @NotNull
+    @Size(min = 2, max = 30)
+    private String lastName;
 
     @NotNull
     @Size(min = 6, max = 30)
-   private String password;
+    private String password;
 
-    private int numberOfTransactions;
+    @ManyToMany
+    @JoinTable(name="user_role", joinColumns=@JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="role_id"))
+    private Set<Role> roles;
 
     private int commission;
 
-    private int transactionTotal;
+    private int transactionCount = 0;
 
-    @ManyToMany
-    private Set<Role> roles;
-
-    @OneToMany(mappedBy="User")
-    private Set<Transaction> transactions;
-
+    private double totalTransactionAmount = 0;
 
     public String getFirstName() {
         return firstName;
@@ -80,23 +79,35 @@ public class User {
         this.roles = roles;
     }
 
-    public Set<Transaction> getTransactions() {
-        return transactions;
+    public int getId() {
+        return id;
     }
 
-    public void setTransactions(Set<Transaction> transactions) {
-        this.transactions = transactions;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public int getNumberOfTransactions() {
-        return transactions.size();
+    public int getCommission() {
+        return commission;
+    }
+
+    public void setCommission(int commission) {
+        this.commission = commission;
+    }
+
+    public int getTransactionCount() {
+        return transactionCount;
+    }
+
+    public void setTransactionCount(int transactionCount) {
+        this.transactionCount = transactionCount;
     }
 
     public double getTotalTransactionAmount() {
-        double ammount = 0;
-        for (Transaction t : transactions) {
-            ammount += t.getAmount();
-        }
-        return ammount;
+        return totalTransactionAmount;
+    }
+
+    public void setTotalTransactionAmount(double totalTransactionAmount) {
+        this.totalTransactionAmount = totalTransactionAmount;
     }
 }
