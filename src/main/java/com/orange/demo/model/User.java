@@ -1,43 +1,42 @@
 package com.orange.demo.model;
 
-import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import java.util.Collection;
 import java.util.Set;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name="user")
+@Table(name = "user")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Email
+    @Column(name = "email")
     private String email;
 
-    @NotNull
-    @Size(min = 2, max = 30)
+    @Column(name = "first_name")
     private String firstName;
 
-    @NotNull
-    @Size(min = 2, max = 30)
+    @Column(name = "last_name")
     private String lastName;
 
-    @NotNull
-    @Size(min = 6, max = 30)
+    @Column(name = "password")
     private String password;
 
-    @ManyToMany
+    @Column(name = "active")
+    private int active;
+
+    @ManyToMany(cascade=CascadeType.ALL)
     @JoinTable(name="user_role", joinColumns=@JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="role_id"))
     private Set<Role> roles;
 
+    @Column(name = "commission")
     private int commission;
 
-    private int transactionCount = 0;
-
-    private double totalTransactionAmount = 0;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Collection<UserTransaction> userTransactions;
 
     public String getFirstName() {
         return firstName;
@@ -71,6 +70,14 @@ public class User {
         this.password = password;
     }
 
+    public int getActive() {
+        return active;
+    }
+
+    public void setActive(int active) {
+        this.active = active;
+    }
+
     public Set<Role> getRoles() {
         return roles;
     }
@@ -95,19 +102,26 @@ public class User {
         this.commission = commission;
     }
 
-    public int getTransactionCount() {
-        return transactionCount;
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", password='" + password + '\'' +
+                ", active=" + active +
+                ", roles=" + roles +
+                ", commission=" + commission +
+                ", userTransactions=" + userTransactions +
+                '}';
     }
 
-    public void setTransactionCount(int transactionCount) {
-        this.transactionCount = transactionCount;
+    public void setUserTransactions(Collection<UserTransaction> userTransactions) {
+        this.userTransactions = userTransactions;
     }
 
-    public double getTotalTransactionAmount() {
-        return totalTransactionAmount;
-    }
-
-    public void setTotalTransactionAmount(double totalTransactionAmount) {
-        this.totalTransactionAmount = totalTransactionAmount;
+    public Collection<UserTransaction> getUserTransactions() {
+        return userTransactions;
     }
 }

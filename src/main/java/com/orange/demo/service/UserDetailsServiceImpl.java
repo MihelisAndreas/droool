@@ -1,4 +1,5 @@
 package com.orange.demo.service;
+
 import com.orange.demo.model.Role;
 import com.orange.demo.model.User;
 import com.orange.demo.repository.UserRepository;
@@ -15,7 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService{
+public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
@@ -26,10 +27,9 @@ public class UserDetailsServiceImpl implements UserDetailsService{
         if (user == null) throw new UsernameNotFoundException(email);
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        for (Role role : user.getRoles()){
-            grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
+        for (Role role : user.getRoles()) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(role.getRole()));
         }
-
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), grantedAuthorities);
     }
 }

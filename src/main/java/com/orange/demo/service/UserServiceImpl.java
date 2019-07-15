@@ -2,7 +2,7 @@ package com.orange.demo.service;
 
 import com.orange.demo.model.Role;
 import com.orange.demo.model.User;
-import com.orange.demo.repository.RoleRepository;
+import com.orange.demo.repository.RoleRespository;
 import com.orange.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,7 +17,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private RoleRepository roleRepository;
+    private RoleRespository roleRepository;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -33,7 +33,5 @@ public class UserServiceImpl implements UserService {
         user.setRoles(new HashSet<>(Arrays.asList(userRole)));
         userRepository.save(user);
     }
-
-
 
 }

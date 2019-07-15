@@ -2,7 +2,7 @@ package com.orange.demo.service;
 
 public interface SecurityService {
 
-    String findLoggedInUser();
+    String findLoggedInUsername();
 
-    void autoLogin(String email, String password);
+    void autologin(String email, String password);
 }

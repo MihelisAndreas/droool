@@ -2,22 +2,30 @@ package com.orange.demo.controller;
 import javax.validation.Valid;
 
 import com.orange.demo.model.User;
+import com.orange.demo.model.UserTransaction;
+import com.orange.demo.service.SecurityService;
+import com.orange.demo.service.TransactionService;
 import com.orange.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Collection;
 
 @Controller
 public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SecurityService securityService;
+
+    @Autowired
+    private TransactionService transactionService;
 
     @RequestMapping(value= {"/", "/login"}, method=RequestMethod.GET)
     public ModelAndView login() {
@@ -32,7 +40,6 @@ public class UserController {
         User user = new User();
         model.addObject("user", user);
         model.setViewName("user/signup");
-
         return model;
     }
 
@@ -47,23 +54,13 @@ public class UserController {
         if(bindingResult.hasErrors()) {
             model.setViewName("user/signup");
         } else {
+            //try catch
             userService.saveUser(user);
             model.addObject("msg", "User has been registered successfully!");
             model.addObject("user", new User());
-            model.setViewName("user/signup");
+            securityService.autologin(user.getEmail(), user.getPassword());
+            model.setViewName("transactions/transact");
         }
-
-        return model;
-    }
-
-    @RequestMapping(value= {"/home/home"}, method=RequestMethod.GET)
-    public ModelAndView home() {
-        ModelAndView model = new ModelAndView();
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findUserByEmail(auth.getName());
-
-        model.addObject("userName", user.getFirstName() + " " + user.getLastName());
-        model.setViewName("home/home");
         return model;
     }
 
@@ -74,10 +71,25 @@ public class UserController {
         return model;
     }
 
-    @RequestMapping(value= {"/transact"}, method=RequestMethod.POST)
-    public ModelAndView transact(User user, Double ammount) {
+    @RequestMapping(value= {"/transact"}, method=RequestMethod.GET)
+    public ModelAndView transact() {
+        Collection<UserTransaction> userTransactions = transactionService.findAll();
         ModelAndView model = new ModelAndView();
+        model.addObject("transactions", userTransactions);
+        model.addObject("form", new UserTransaction());
+        model.setViewName("transactions/transact");
+        return model;
+    }
+
+    @RequestMapping(value= {"/transactions/save"}, method=RequestMethod.POST)
+    public ModelAndView createTrans(@Valid UserTransaction tr, BindingResult bindingResult) {
+        transactionService.create(tr.getAmount());
+        ModelAndView model = new ModelAndView();
+        model.addObject("form",new UserTransaction());
+        Collection<UserTransaction> userTransactions = transactionService.findAll();
+        model.addObject("transactions", userTransactions);
         model.setViewName("transactions/transact");
         return model;
     }
 }
+

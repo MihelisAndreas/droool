@@ -4,8 +4,7 @@ import com.orange.demo.model.User;
 
 public interface UserService {
 
-    User findUserByEmail(String email);
+    public User findUserByEmail(String email);
 
-    void saveUser(User user);
-
+    public void saveUser(User user);
 }
